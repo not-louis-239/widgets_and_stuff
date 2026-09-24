@@ -11,3 +11,66 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+from abc import abstractmethod
+from pathlib import Path
+
+import pygame as pg
+
+from ._base_widget import Widget
+
+
+class _Button(Widget):
+    def __init__(
+            self, *,
+            flex: float = 0, text: str = "", font: pg.font.Font, inset: int = 0,
+            fixed_size: tuple[int, int] | None = None, img_path: Path | None = None,
+        ) -> None:
+        super().__init__(flex=flex)
+        self.text = text
+        self.font = font
+        self.inset = inset
+        self.fixed_size = fixed_size
+        self.img_path = img_path
+
+    def _get_text_inset_size(self) -> tuple[int, int]:
+        """Get text size, including inset."""
+        text_size = self.font.size(self.text)
+        return text_size[0] + self.inset * 2, text_size[1] + self.inset * 2
+
+    @abstractmethod
+    def check_click(self, mouse_pos: tuple[int, int]) -> bool:
+        raise NotImplementedError
+
+
+class RectButton(_Button):
+    def check_click(self, mouse_pos: tuple[int, int]) -> bool:
+        return self.rect.collidepoint(mouse_pos)
+
+    def preferred_size(self) -> tuple[int, int]:
+        return self.fixed_size or self._get_text_inset_size()
+
+    def layout(self, rect: pg.Rect) -> None:
+        self.rect = rect
+
+
+class CircleButton(_Button):
+    def __init__(
+            self, *, r: int, flex: float = 0,
+            text: str = "", font: pg.font.Font, inset: int = 0,
+            fixed_size: tuple[int, int] | None = None, img_path: Path | None = None
+        ) -> None:
+        super().__init__(flex=flex, text=text, font=font, inset=inset, fixed_size=fixed_size, img_path=img_path)
+        self.r = r
+
+    def check_click(self, mouse_pos: tuple[int, int]) -> bool:
+        dx = mouse_pos[0] - self.rect.centerx
+        dy = mouse_pos[1] - self.rect.centery
+        return dx ** 2 + dy ** 2 <= self.r ** 2
+
+    def preferred_size(self) -> tuple[int, int]:
+        return (2 * self.r, 2 * self.r)
+
+    def layout(self, rect: pg.Rect) -> None:
+        self.rect = rect
