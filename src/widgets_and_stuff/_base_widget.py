@@ -14,18 +14,32 @@
 
 
 from __future__ import annotations
+
+from typing import Any
 from abc import ABC, abstractmethod
 
 import pygame as pg
 
 
+from ._custom_types import Colour
+
+
 class Widget(ABC):
-    def __init__(self, *, flex: float = 0.0) -> None:
+    def __init__(
+            self, *, flex: float = 0.0,
+            draw_attrs: dict[str, Any] | None = None,
+            colours: dict[str, Colour] | None = None
+        ) -> None:
         self.flex = flex
         self.rect = pg.Rect(0, 0, 0, 0)
         self.children: list[Widget] = []
         self.visible: bool = True
         self.active: bool = False
+
+        # These are to allow implementation of custom draw functions
+        # and attaching custom attributes for drawing and colouring
+        self.draw_attrs = draw_attrs or {}
+        self.colours = colours or {}
 
     @abstractmethod
     def preferred_size(self) -> tuple[int, int]:

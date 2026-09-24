@@ -15,19 +15,24 @@
 
 from abc import abstractmethod
 from pathlib import Path
+from typing import Any
 
 import pygame as pg
+
+from widgets_and_stuff._custom_types import Colour
 
 from ._base_widget import Widget
 
 
 class _Button(Widget):
     def __init__(
-            self, *,
-            flex: float = 0, text: str = "", font: pg.font.Font, inset: int = 0,
+            self, *, flex: float = 0,
+            draw_attrs: dict[str, Any] | None = None,
+            colours: dict[str, tuple[int, int, int]] | None = None,
+            text: str = "", font: pg.font.Font, inset: int = 0,
             fixed_size: tuple[int, int] | None = None, img_path: Path | None = None,
         ) -> None:
-        super().__init__(flex=flex)
+        super().__init__(flex=flex, draw_attrs=draw_attrs, colours=colours)
         self.text = text
         self.font = font
         self.inset = inset
@@ -58,10 +63,12 @@ class RectButton(_Button):
 class CircleButton(_Button):
     def __init__(
             self, *, r: int, flex: float = 0,
+            draw_attrs: dict[str, Any] | None = None,
+            colours: dict[str, tuple[int, int, int]] | None = None,
             text: str = "", font: pg.font.Font, inset: int = 0,
             fixed_size: tuple[int, int] | None = None, img_path: Path | None = None
         ) -> None:
-        super().__init__(flex=flex, text=text, font=font, inset=inset, fixed_size=fixed_size, img_path=img_path)
+        super().__init__(flex=flex, draw_attrs=draw_attrs, colours=colours, text=text, font=font, inset=inset, fixed_size=fixed_size, img_path=img_path)
         self.r = r
 
     def check_click(self, mouse_pos: tuple[int, int]) -> bool:
