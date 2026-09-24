@@ -13,9 +13,27 @@
 # limitations under the License.
 
 
+from __future__ import annotations
+from abc import ABC, abstractmethod
+
 import pygame as pg
 
 
-class Widget:
-    def __init__(self) -> None:
+class Widget(ABC):
+    def __init__(self, *, flex: float = 0.0) -> None:
+        self.flex = flex
         self.rect = pg.Rect(0, 0, 0, 0)
+        self.children: list[Widget] = []
+        self.visible: bool = True
+        self.active: bool = False
+
+    @abstractmethod
+    def preferred_size(self) -> tuple[int, int]:
+        """How big should this UI element be, given no constraints?"""
+        raise NotImplementedError
+
+    @abstractmethod
+    def layout(self, rect: pg.Rect) -> None:
+        """Assign the rect to `self` and divide space between
+        any potential children of `self`."""
+        raise NotImplementedError

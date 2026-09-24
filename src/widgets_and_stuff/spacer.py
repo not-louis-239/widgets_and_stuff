@@ -11,3 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
+from pygame import Rect
+
+from ._base_widget import Widget
+
+
+class Spacer(Widget):
+    def __init__(self, *, flex: float = 0.0, min_w: int = 0, min_h: int = 0) -> None:
+        super().__init__(flex=flex)
+        self.min_w = min_w
+        self.min_h = min_h
+
+    def preferred_size(self) -> tuple[int, int]:
+        return (self.min_w, self.min_h)
+
+    def layout(self, rect: Rect) -> None:
+        self.rect = rect
