@@ -13,6 +13,11 @@
 # limitations under the License.
 
 
+# input box constants
 DELETE_DELAY = 0.5
 DELETE_INTERVAL = 0.075
 CURSOR_FLASH_INTERVAL = 0.75
+
+
+# default colour
+BLACK = (0, 0, 0)
